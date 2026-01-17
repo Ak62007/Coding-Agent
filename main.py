@@ -2,6 +2,8 @@ import os
 import argparse
 from typing import Any
 from google import genai
+from prompts import system_prompt
+from call_function import available_functions
 from google.genai import types
 from dotenv import load_dotenv
 
@@ -18,7 +20,7 @@ except:
 
 client = genai.Client(api_key=api_key)
 
-def llm_call(args, contents: list[Any], model_name: str = "gemini-2.5-flash") -> str:
+def llm_call(system_prompt: str, args, contents: list[Any], model_name: str = "gemini-2.5-flash") -> str:
     """
     Docstring for llm_call
     
@@ -29,7 +31,11 @@ def llm_call(args, contents: list[Any], model_name: str = "gemini-2.5-flash") ->
     """
     response =  client.models.generate_content(
                 model=model_name,
-                contents=contents
+                contents=contents,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    tools=[available_functions]
+                    ),
                 )
     
     if response.usage_metadata:
@@ -44,7 +50,11 @@ def llm_call(args, contents: list[Any], model_name: str = "gemini-2.5-flash") ->
         print(f"Response tokens: {token_received}")
         print(f"Response:\n{response.text}")
     else:
-        print(f"Response:\n{response.text}")
+        if response.function_calls:
+            for function_call in response.function_calls:
+                print(f"Calling function: {function_call.name}({function_call.args})")
+        else:
+            print(f"{response.text}")
     
     return response.text
     
@@ -53,7 +63,7 @@ def llm_call(args, contents: list[Any], model_name: str = "gemini-2.5-flash") ->
 def main():
     # prompt = "Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
     messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
-    response = llm_call(args=args, contents=messages)
+    response = llm_call(system_prompt=system_prompt, args=args, contents=messages)
 
 
 if __name__ == "__main__":
