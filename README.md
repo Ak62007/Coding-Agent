@@ -25,18 +25,18 @@ A CLI-based AI coding assistant powered by Google Gemini. This agent acts as an 
 
 2. **Install dependencies:**
 This project uses `uv` for dependency management, but standard `pip` works as well:
-```bash
-pip install google-genai python-dotenv
-
-```
+   ```bash
+   pip install google-genai python-dotenv
+   
+   ```
 
 
 3. **Configure Environment:**
 Create a `.env` file in the root directory and add your Gemini API key:
-```text
-GEMINI_API_KEY=your_actual_api_key_here
-
-```
+   ```text
+   GEMINI_API_KEY=your_actual_api_key_here
+   
+   ```
 
 
 
@@ -71,4 +71,5 @@ python main.py "Write a python script to calculate the factorial of 5" --verbose
 * `agent_call.py`: Core logic for interacting with the Gemini API.
 * `functions/`: Contains tool definitions (file I/O, code execution).
 * `calculator/`: The sandboxed workspace where the agent operates.
+
 
