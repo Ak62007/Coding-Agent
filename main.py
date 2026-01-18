@@ -3,7 +3,7 @@ import argparse
 from typing import Any
 from google import genai
 from prompts import system_prompt
-from call_function import available_functions
+from call_function import available_functions, call_function
 from google.genai import types
 from dotenv import load_dotenv
 
@@ -48,7 +48,23 @@ def llm_call(system_prompt: str, args, contents: list[Any], model_name: str = "g
         print(f"User prompt: {args.user_prompt}")
         print(f"Prompt tokens: {token_sent}")
         print(f"Response tokens: {token_received}")
-        print(f"Response:\n{response.text}")
+        if response.function_calls:
+            function_results = []
+            for function_call in response.function_calls:
+                function_call_result = call_function(function_call=function_call, verbose=True)
+                if not function_call_result.parts:
+                    raise Exception("Error: Function result has no parts")
+                else:
+                    if function_call_result.parts[0].function_response == None:
+                        raise Exception("Error: No response in the function call result")
+                    else:
+                        if function_call_result.parts[0].function_response.response == None:
+                            raise Exception("Error: No Actual response in the function_response.response")
+                        else:
+                            function_results.append(function_call_result.parts[0])
+                            print(f"-> {function_call_result.parts[0].function_response.response}")
+        else:
+            print(f"{response.text}")
     else:
         if response.function_calls:
             for function_call in response.function_calls:
