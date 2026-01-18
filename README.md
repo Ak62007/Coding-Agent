@@ -21,7 +21,7 @@ A CLI-based AI coding assistant powered by Google Gemini. This agent acts as an 
    git clone <repository_url>
    cd coding-agent
 
-```
+   ```
 
 2. **Install dependencies:**
 This project uses `uv` for dependency management, but standard `pip` works as well:
@@ -71,3 +71,4 @@ python main.py "Write a python script to calculate the factorial of 5" --verbose
 * `agent_call.py`: Core logic for interacting with the Gemini API.
 * `functions/`: Contains tool definitions (file I/O, code execution).
 * `calculator/`: The sandboxed workspace where the agent operates.
+
